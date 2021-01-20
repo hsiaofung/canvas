@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./modernizr-1.6.min.js"></script>
+  </head>
+  <body>
+    <div style="position: absolute; top: 50px; left: 50px">
+      <canvas id="canvasOne" width="1000" height="1000"> Your browser does not support HTML5 Canvas </canvas>
+    </div>
+    <script>
+      window.addEventListener('load', eventWindowLoaded, false);
+      var Debugger = function () {};
+      Debugger.log = function (message) {
+        try {
+          console.log(message);
+        } catch (exception) {
+          return;
+        }
+      };
+
+      function eventWindowLoaded() {
+        canvasApp();
+      }
+
+      function canvasSupport() {
+        return Modernizr.canvas;
+      }
+
+      function canvasApp() {
+        if (!canvasSupport()) {
+          return;
+        }
+        var theCanvas = document.getElementById('canvasOne');
+        var context = theCanvas.getContext('2d');
+
+        Debugger.log('Drawing Canvas');
+        drawScreen();
+
+        function rads(x) {
+          return (Math.PI * x) / 180;
+        }
+
+        function drawScreen() {
+          //在螢幕上繪製一個大框框
+          context.fillStyle = 'black';
+          context.fillRect(10, 10, 200, 200);
+          context.save(); //儲存圖形狀態
+
+          context.beginPath();
+          //將canvas從0,0處開始剪裁50x50的大小
+          context.rect(0, 0, 50, 50);
+          context.clip();
+
+          //紅色的圖
+          context.beginPath();
+          context.strokeStyle = 'red';
+          context.lineWidth = 5;
+          context.arc(100, 100, 100, 0, rads(360), false);
+          context.stroke();
+          context.closePath();
+
+          //完整的圖
+          context.restore();
+          //重新剪裁成完整的canvas
+          context.beginPath();
+          context.rect(0, 0, 500, 500);
+          context.clip();
+
+          //繪製一條不可被裁剪的藍色線條
+          context.beginPath();
+          context.strokeStyle = 'blue';
+          context.lineWidth = 5;
+          context.arc(100, 100, 50, 0, rads(360), false);
+          //完整的圖
+          context.stroke();
+          context.closePath();
+        }
+      }
+    </script>
+  </body>
+</html>
