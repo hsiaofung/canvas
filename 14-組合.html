@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./modernizr-1.6.min.js"></script>
+  </head>
+  <body>
+    <div style="position: absolute; top: 50px; left: 50px">
+      <canvas id="canvasOne" width="1000" height="1000"> Your browser does not support HTML5 Canvas </canvas>
+    </div>
+    <script>
+      window.addEventListener('load', eventWindowLoaded, false);
+      var Debugger = function () {};
+      Debugger.log = function (message) {
+        try {
+          console.log(message);
+        } catch (exception) {
+          return;
+        }
+      };
+
+      function eventWindowLoaded() {
+        canvasApp();
+      }
+
+      function canvasSupport() {
+        return Modernizr.canvas;
+      }
+
+      function canvasApp() {
+        if (!canvasSupport()) {
+          return;
+        }
+        var theCanvas = document.getElementById('canvasOne');
+        var context = theCanvas.getContext('2d');
+
+        Debugger.log('Drawing Canvas');
+        drawScreen();
+
+        function rads(x) {
+          return (Math.PI * x) / 180;
+        }
+
+        function drawScreen() {
+          //在螢幕上繪製一個大框框
+          context.fillStyle = 'black';
+          context.fillRect(10, 10, 200, 200);
+          //讓globalCompositeOperation保持現狀
+          //繪製一個紅色的正方形
+          context.fillStyle = 'red';
+          context.fillRect(1, 1, 50, 50);
+
+          //將globalCompositeOperation設定為source - over;
+          context.globalCompositeOperation = 'source-over';
+          //旁邊再畫一個藍色正方形
+          context.fillStyle = 'blue';
+          context.fillRect(60, 1, 50, 50);
+
+          //設定為destination-atop
+          context.globalCompositeOperation = 'destination-over';
+          context.fillStyle = 'green';
+          context.fillRect(1, 60, 50, 50);
+
+          //設定globalAlpha
+          context.globalAlpha = 0.5;
+          //將其設定為source-atop
+          context.globalCompositeOperation = 'source-atop';
+          context.fillStyle = 'yellow';
+          context.fillRect(60, 60, 50, 50);
+        }
+      }
+    </script>
+  </body>
+</html>

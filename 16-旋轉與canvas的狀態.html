@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./modernizr-1.6.min.js"></script>
+  </head>
+  <body>
+    <div style="position: absolute; top: 50px; left: 50px">
+      <canvas id="canvasOne" width="1000" height="1000"> Your browser does not support HTML5 Canvas </canvas>
+    </div>
+    <script>
+      window.addEventListener('load', eventWindowLoaded, false);
+      var Debugger = function () {};
+      Debugger.log = function (message) {
+        try {
+          console.log(message);
+        } catch (exception) {
+          return;
+        }
+      };
+
+      function eventWindowLoaded() {
+        canvasApp();
+      }
+
+      function canvasSupport() {
+        return Modernizr.canvas;
+      }
+
+      function canvasApp() {
+        if (!canvasSupport()) {
+          return;
+        }
+        var theCanvas = document.getElementById('canvasOne');
+        var context = theCanvas.getContext('2d');
+
+        Debugger.log('Drawing Canvas');
+        drawScreen();
+
+        function rads(x) {
+          return (Math.PI * x) / 180;
+        }
+
+        function drawScreen() {
+          //繪製一個黑色的正方形
+          context.fillStyle = 'black';
+          context.fillRect(20, 20, 25, 25);
+
+          //繪製一個紅色的正方形
+          context.setTransform(1, 0, 0, 1, 0, 0);
+          context.rotate(rads(45));
+          context.fillStyle = 'red';
+          context.fillRect(100, 100, 50, 50);
+        }
+      }
+    </script>
+  </body>
+</html>
