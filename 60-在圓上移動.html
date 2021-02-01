@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./modernizr-1.6.min.js"></script>
+  </head>
+  <body>
+    <div style="position: absolute; top: 50px; left: 50px">
+      <canvas id="canvasOne" width="500" height="500"> Your browser does not support HTML5 Canvas </canvas>
+    </div>
+    <script>
+      window.addEventListener('load', eventWindowLoaded, false);
+      var Debugger = function () {};
+      Debugger.log = function (message) {
+        try {
+          console.log(message);
+        } catch (exception) {
+          return;
+        }
+      };
+
+      function eventWindowLoaded() {
+        canvasApp();
+      }
+
+      function canvasSupport() {
+        return Modernizr.canvas;
+      }
+
+      function canvasApp() {
+        if (!canvasSupport()) {
+          return;
+        }
+        var pointImage = new Image();
+        pointImage.src = 'point.png';
+
+        function drawScreen() {
+          context.fillStyle = '#EEEEEE';
+          context.fillRect(0, 0, theCanvas.width, theCanvas.height);
+          //方形
+          context.strokeStyle = '#000000';
+          context.strokeRect(1, 1, theCanvas.width - 2, theCanvas.height - 2);
+          //建立一個球
+          ball.x = circle.centerX + Math.cos(circle.angle) * circle.radius;
+          ball.y = circle.centerY + Math.sin(circle.angle) * circle.radius;
+
+          circle.angle += ball.speed;
+
+          context.fillStyle = '#000000';
+          context.beginPath();
+          context.arc(ball.x, ball.y, 15, 0, Math.PI * 2, true);
+          context.closePath();
+          context.fill();
+        }
+
+        var radius = 100;
+        var circle = { centerX: 250, centerY: 250, radius: 125, angle: 0 };
+        var ball = { x: 0, y: 0, speed: 0.1 };
+
+        theCanvas = document.getElementById('canvasOne');
+        context = theCanvas.getContext('2d');
+        setInterval(drawScreen, 33);
+
+        function rads(x) {
+          return (Math.PI * x) / 180;
+        }
+      }
+    </script>
+  </body>
+</html>
