@@ -33,6 +33,8 @@
         if (!canvasSupport()) {
           return;
         }
+        var pointImage = new Image();
+        pointImage.src = 'point.png';
 
         function drawScreen() {
           context.fillStyle = '#EEEEEE';
@@ -41,32 +43,31 @@
           context.strokeStyle = '#000000';
           context.strokeRect(1, 1, theCanvas.width - 2, theCanvas.height - 2);
           //建立一個球
-          if (moves > 0) {
-            moves--;
-            ball.x += xunits;
-            ball.y += yunits;
+          ball.x += xunits;
+          ball.y += yunits;
+          //畫點來說明路徑
+          points.push({ x: ball.x, y: ball.y });
+          for (var i = 0; i < points.length; i++) {
+            context.drawImage(pointImage, points[i].x, points[i].y, 1, 1);
           }
+
           context.fillStyle = '#000000';
           context.beginPath();
           context.arc(ball.x, ball.y, 15, 0, Math.PI * 2, true);
           context.closePath();
           context.fill();
         }
-        theCanvas = document.getElementById('canvasOne');
-        context = theCanvas.getContext('2d');
 
         var speed = 5;
         var p1 = { x: 20, y: 250 };
-        
-        var p2 = { x: 480, y: 500 };
-        var dx = p2.x - p1.x;
-        var dy = p2.y - p1.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        var moves = distance / speed;
-        var xunits = (p2.x - p1.x) / moves;
-        var yunits = (p2.y - p1.y) / moves;
-        var ball = { x: p1.x, y: p1.y };
 
+        var xunits = Math.cos(rads(45)) * speed;
+        var yunits = Math.sin(rads(45)) * speed;
+        var ball = { x: p1.x, y: p1.y };
+        var points = new Array();
+
+        theCanvas = document.getElementById('canvasOne');
+        context = theCanvas.getContext('2d');
         setInterval(drawScreen, 33);
 
         function rads(x) {

@@ -33,6 +33,8 @@
         if (!canvasSupport()) {
           return;
         }
+        var pointImage = new Image();
+        pointImage.src = 'point.png';
 
         function drawScreen() {
           context.fillStyle = '#EEEEEE';
@@ -46,6 +48,12 @@
             ball.x += xunits;
             ball.y += yunits;
           }
+          //畫點來說明路徑
+          points.push({ x: ball.x, y: ball.y });
+          for (var i = 0; i < points.length; i++) {
+            context.drawImage(pointImage, points[i].x, points[i].y, 1, 1);
+          }
+
           context.fillStyle = '#000000';
           context.beginPath();
           context.arc(ball.x, ball.y, 15, 0, Math.PI * 2, true);
@@ -57,7 +65,7 @@
 
         var speed = 5;
         var p1 = { x: 20, y: 250 };
-        
+
         var p2 = { x: 480, y: 500 };
         var dx = p2.x - p1.x;
         var dy = p2.y - p1.y;
@@ -66,6 +74,7 @@
         var xunits = (p2.x - p1.x) / moves;
         var yunits = (p2.y - p1.y) / moves;
         var ball = { x: p1.x, y: p1.y };
+        var points = new Array();
 
         setInterval(drawScreen, 33);
 
