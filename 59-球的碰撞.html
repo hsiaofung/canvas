@@ -8,33 +8,17 @@
   </head>
   <body>
     <div style="position: absolute; top: 50px; left: 50px">
-      <canvas id="canvasOne" width="500" height="500">
-        Your browser does not support HTML5 Canvas
-      </canvas>
+      <canvas id="canvasOne" width="500" height="500"> Your browser does not support HTML5 Canvas </canvas>
       <form action="">
         Canvas Width:
-        <input
-          type="range"
-          id="canvasWidth"
-          min="0"
-          max="1000"
-          step="1"
-          value="500"
-        />
+        <input type="range" id="canvasWidth" min="0" max="1000" step="1" value="500" />
         <br />
         Canvas Height:
-        <input
-          type="range"
-          id="canvasHeight"
-          min="0"
-          max="1000"
-          step="1"
-          value="500"
-        />
+        <input type="range" id="canvasHeight" min="0" max="1000" step="1" value="500" />
       </form>
     </div>
     <script>
-      window.addEventListener("load", eventWindowLoaded, false);
+      window.addEventListener('load', eventWindowLoaded, false);
       var Debugger = function () {};
       Debugger.log = function (message) {
         try {
@@ -57,17 +41,17 @@
           return;
         }
 
-        formElement = document.getElementById("canvasWidth");
-        formElement.addEventListener("change", canvasWidthChanged, false);
+        formElement = document.getElementById('canvasWidth');
+        formElement.addEventListener('change', canvasWidthChanged, false);
 
-        formElement = document.getElementById("canvasHeight");
-        formElement.addEventListener("change", canvasHeightChanged, false);
+        formElement = document.getElementById('canvasHeight');
+        formElement.addEventListener('change', canvasHeightChanged, false);
 
         function drawScreen() {
-          context.fillStyle = "#EEEEEE";
+          context.fillStyle = '#EEEEEE';
           context.fillRect(0, 0, theCanvas.width, theCanvas.height);
           //方形
-          context.strokeStyle = "#000000";
+          context.strokeStyle = '#000000';
           context.strokeRect(1, 1, theCanvas.width - 2, theCanvas.height - 2);
 
           update();
@@ -107,7 +91,7 @@
 
         function render() {
           var ball;
-          context.fillStyle = "#000000";
+          context.fillStyle = '#000000';
           for (var i = 0; i < balls.length; i++) {
             ball = balls[i];
             ball.x = ball.nextx;
@@ -137,20 +121,41 @@
           var dx = ball1.nextx - ball2.nextx;
           var dy = ball1.nexty - ball2.nexty;
           var distance = dx * dx + dy * dy;
-          if (
-            distance <=
-            (ball1.radius + ball2.radius) * (ball1.radius + ball2.radius)
-          ) {
+          if (distance <= (ball1.radius + ball2.radius) * (ball1.radius + ball2.radius)) {
             retval = true;
           }
+          return retval;
         }
 
-        function collideBalls(ball1, ball2){
-            
+        function collideBalls(ball1, ball2) {
+          var dx = ball1.nextx - ball2.nextx;
+          var dy = ball1.nexty - ball2.nexty;
+
+          var collisionAngle = Math.atan2(dy, dx);
+
+          var speed1 = Math.sqrt(ball1.velocityx * ball1.velocityx + ball1.velocityy * ball1.velocityy);
+          var speed2 = Math.sqrt(ball2.velocityx * ball2.velocityx + ball2.velocityy * ball2.velocityy);
+
+          var direction1 = Math.atan2(ball1.velocityy, ball1.velocityx);
+          var direction2 = Math.atan2(ball2.velocityy, ball2.velocityx);
+
+          var velocityx_1 = speed1 * Math.cos(direction1 - collisionAngle);
+          var velocityy_1 = speed1 * Math.sin(direction1 - collisionAngle);
+          var velocityx_2 = speed2 * Math.cos(direction2 - collisionAngle);
+          var velocityy_2 = speed2 * Math.sin(direction2 - collisionAngle);
+
+          var final_velocityx_1 =
+            ((ball1.mass - ball2.mass) * velocityx_1 + (ball2.mass + ball2.mass) * velocityx_2) /
+            (ball1.mass + ball2.mass);
+          var final_velocityx_2 =
+            ((ball1.mass + ball1.mass) * velocityx_1 + (ball2.mass - ball1.mass) * velocityx_2) /
+            (ball1.mass + ball2.mass);
+          var final_velocityy_1 = velocityy_1;
+          var final_velocityy_2 = velocityy_2;
         }
 
-        var numBalls = 999;
-        var maxSize = 8;
+        var numBalls = 200;
+        var maxSize = 15;
         var minSize = 5;
         var maxSpeed = maxSize + 5;
         var balls = new Array();
@@ -164,19 +169,13 @@
         var tempXunits;
         var tempYunits;
 
-        theCanvas = document.getElementById("canvasOne");
-        context = theCanvas.getContext("2d");
+        theCanvas = document.getElementById('canvasOne');
+        context = theCanvas.getContext('2d');
 
         for (var i = 0; i < numBalls; i++) {
           tempRadius = Math.floor(Math.random() * maxSize) + minSize;
-          tempX =
-            tempRadius * 2 +
-            Math.floor(Math.random() * theCanvas.width) -
-            tempRadius * 2;
-          tempY =
-            tempRadius * 2 +
-            Math.floor(Math.random() * theCanvas.height) -
-            tempRadius * 2;
+          tempX = tempRadius * 2 + Math.floor(Math.random() * theCanvas.width) - tempRadius * 2;
+          tempY = tempRadius * 2 + Math.floor(Math.random() * theCanvas.height) - tempRadius * 2;
           tempSpeed = maxSpeed - tempRadius;
           tempAngle = Math.floor(Math.random() * 360);
           tempXunits = Math.cos(rads(tempAngle)) * tempSpeed;
