@@ -136,7 +136,7 @@
 
           //Move Aliens
           for (var i = aliens.length - 1; i >= 0; i--) {
-            aliens[i].x -= missiles[i].speed;
+            aliens[i].x += aliens[i].speed;
             if (aliens[i].x < 0 || aliens[i].x > theCanvas.width - aliens[i].width) {
               aliens[i].x *= -1;
               aliens[i].y += 20;
@@ -174,24 +174,32 @@
           context.drawImage(playerImage, player.x, player.y);
           //Draw Missiles
           for (var i = missiles.length - 1; i >= 0; i--) {
-            contex.drawImage(missileImage, missiles[i].x, missiles[i].y);
+            context.drawImage(missileImage, missiles[i].x, missiles[i].y);
           }
           //Draw Aliens
           for (var i = aliens.length - 1; i >= 0; i--) {
-            contex.drawImage(alienImage, aliens[i].x, aliens[i].y);
+            context.drawImage(alienImage, aliens[i].x, aliens[i].y);
           }
           context.fillStyle = '#FFFFFF';
         }
-        function eventMouseDown(event) {
-          //點擊音量滑桿
-          if (
-            mouseY >= volumeSliderY &&
-            mouseY <= volumeSliderY + sliderH &&
-            mouseX >= volumeSliderX &&
-            mouseX <= volumeSliderX + sliderW
-          ) {
-            volumeSliderDrag = true;
+
+        function hitTest(image1, image2) {
+          r1left = image1.x;
+          r1top = image1.y;
+          r1right = image1.x + image1.width;
+          r1bottom = image1.y + image1.height;
+          r2left = image2.x;
+          r2top = image2.y;
+          r2right = image2.x + image2.width;
+          r2bottom = image2.y + image2.height;
+          retval = false;
+
+          if (r1left > r2right || r1right < r2left || r1bottom < r2top || r1top > r2bottom) {
+            retval = false;
+          } else {
+            retval = true;
           }
+          return retval;
         }
 
         function eventMouseMove(event) {
@@ -202,67 +210,40 @@
             mouseX = event.offsetX;
             mouseY = event.offsetY;
           }
+          player.x = mouseX;
+          player.y = mouseY;
         }
+
         function eventMouseUp(event) {
-          //點擊播放鈕
-          if (mouseY >= playY && mouseY <= playY + bH && mouseX >= playX && mouseX <= playX + bW) {
-            if (audioElement.paused) {
-              audioElement.play();
-            } else {
-              audioElement.pause();
-            }
-          }
-          //點擊循環鈕
-          if (mouseY >= loopY && mouseY <= loopY + bH && mouseX >= loopX && mouseX <= loopX + bW) {
-            if (audioElement.loop) {
-              audioElement.loop = false;
-            } else {
-              audioElement.loop = true;
-            }
-          }
-
-          if (volumeSliderDrag) {
-            volumeSliderDrag = false;
-          }
+          missiles.push({
+            speed: 5,
+            x: player.x + 0.5 * playerImage.width,
+            y: player.y - missileImage.height,
+            width: missileImage.width,
+            height: missileImage.height,
+          });
+          shootSound.play();
         }
 
-        var theCanvas = document.getElementById('canvasOne');
-        var context = theCanvas.getContext('2d');
-
-        var bW = 32;
-        var bH = 32;
-        var playBackW = 206;
-        var volBackW = 50;
-        var sliderW = 10;
-        var sliderH = 32;
-        var controlStartX = 25;
-        var controlStartY = 200;
-        var playX = controlStartX;
-        var playY = controlStartY;
-        var playBackX = controlStartX + bW;
-        var playBackY = controlStartY;
-        var volBackX = controlStartX + bW + playBackW;
-        var volBackY = controlStartY;
-        var loopX = controlStartX + bW + playBackW + volBackW;
-        var loopY = controlStartY;
-        var mouseX;
-        var mouseY;
-
+        function run() {
+          switch (appState) {
+            case STATE_INIT:
+              initApp();
+              break;
+            case STATE_LOADING:
+              break;
+            case STATE_RESET:
+              resetApp();
+              break;
+            case STATE_PLAYING:
+              drawScreen();
+              break;
+          }
+        }
         theCanvas.addEventListener('mouseup', eventMouseUp, false);
-        theCanvas.addEventListener('mousedown', eventMouseDown, false);
         theCanvas.addEventListener('mousemove', eventMouseMove, false);
 
-        audioElement.play();
-        audioElement.loop = false;
-        audioElement.volume = 0.5;
-        var volumeSliderStart = volBackX;
-        var volumeSliderEnd = volumeSliderStart + volBackW - sliderW;
-        var volumeSliderX = volumeSliderStart + audioElement.volume * (volBackW - sliderW);
-        var volumeSliderY = controlStartY;
-        var volumeSliderDrag = false;
-        var volumeIncrement = 1 / (volBackW - sliderW);
-
-        setInterval(drawScreen, 33);
+        setInterval(run, 33);
       }
     </script>
   </body>
