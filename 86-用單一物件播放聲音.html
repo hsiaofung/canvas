@@ -7,9 +7,7 @@
     <script src="./modernizr-1.6.min.js"></script>
   </head>
   <body>
-    <div style="position: absolute; top: 50px; left: 50px">
-      <canvas id="canvasOne" width="500" height="300"> Your browser does not support HTML5 Canvas. </canvas>
-    </div>
+    <canvas id="canvasOne" width="500" height="500"> Your browser does not support HTML5 Canvas. </canvas>
 
     <script>
       window.addEventListener('load', eventWindowLoaded, false);
@@ -108,7 +106,7 @@
           for (var r = 0; r < ALIEN_ROWS; r++) {
             for (var c = 0; c < ALIEN_COLS; c++) {
               aliens.push({
-                speed: 2,
+                speed: 5,
                 x: ALIEN_START_X + c * ALIEN_SPACING,
                 y: ALIEN_START_Y + r * ALIEN_SPACING,
                 width: alienImage.width,
@@ -138,7 +136,7 @@
           for (var i = aliens.length - 1; i >= 0; i--) {
             aliens[i].x += aliens[i].speed;
             if (aliens[i].x < 0 || aliens[i].x > theCanvas.width - aliens[i].width) {
-              aliens[i].x *= -1;
+              aliens[i].speed *= -1;
               aliens[i].y += 20;
             }
             if (aliens[i].y > theCanvas.height) {
